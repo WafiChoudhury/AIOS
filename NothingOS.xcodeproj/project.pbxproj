@@ -13,6 +13,10 @@
 		B13FE06B2D1B6F210018ED85 /* ActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13FE06A2D1B6F210018ED85 /* ActionHandler.swift */; };
 		B13FE06D2D1B6F2D0018ED85 /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13FE06C2D1B6F2D0018ED85 /* Action.swift */; };
 		B13FE06F2D1F0F3D0018ED85 /* FileContextManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13FE06E2D1F0F3D0018ED85 /* FileContextManager.swift */; };
+		B13FE0712D1F43F10018ED85 /* VisionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13FE0702D1F43F10018ED85 /* VisionModel.swift */; };
+		B13FE0732D1F44EC0018ED85 /* ScreenshotCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13FE0722D1F44EC0018ED85 /* ScreenshotCapture.swift */; };
+		B13FE0752D1F451C0018ED85 /* AIVisionResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13FE0742D1F451C0018ED85 /* AIVisionResponse.swift */; };
+		B13FE0772D1F455B0018ED85 /* CursorControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13FE0762D1F455B0018ED85 /* CursorControl.swift */; };
 		B14D76262D16575300D86356 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14D76252D16575300D86356 /* Message.swift */; };
 		B14D76292D1657DF00D86356 /* OpenAIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14D76282D1657DE00D86356 /* OpenAIService.swift */; };
 		B14D762B2D16580B00D86356 /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14D762A2D16580B00D86356 /* ChatViewModel.swift */; };
@@ -46,6 +50,10 @@
 		B13FE06A2D1B6F210018ED85 /* ActionHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionHandler.swift; sourceTree = "<group>"; };
 		B13FE06C2D1B6F2D0018ED85 /* Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 		B13FE06E2D1F0F3D0018ED85 /* FileContextManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileContextManager.swift; sourceTree = "<group>"; };
+		B13FE0702D1F43F10018ED85 /* VisionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionModel.swift; sourceTree = "<group>"; };
+		B13FE0722D1F44EC0018ED85 /* ScreenshotCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotCapture.swift; sourceTree = "<group>"; };
+		B13FE0742D1F451C0018ED85 /* AIVisionResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIVisionResponse.swift; sourceTree = "<group>"; };
+		B13FE0762D1F455B0018ED85 /* CursorControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CursorControl.swift; sourceTree = "<group>"; };
 		B14D76252D16575300D86356 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		B14D76282D1657DE00D86356 /* OpenAIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIService.swift; sourceTree = "<group>"; };
 		B14D762A2D16580B00D86356 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
@@ -83,6 +91,7 @@
 				B13FE06C2D1B6F2D0018ED85 /* Action.swift */,
 				B14D76252D16575300D86356 /* Message.swift */,
 				B13FE06E2D1F0F3D0018ED85 /* FileContextManager.swift */,
+				B13FE0742D1F451C0018ED85 /* AIVisionResponse.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -109,6 +118,9 @@
 				B11E1E422D12A2A500BBC4D2 /* FileHandler.swift */,
 				B14D76282D1657DE00D86356 /* OpenAIService.swift */,
 				B13FE06A2D1B6F210018ED85 /* ActionHandler.swift */,
+				B13FE0702D1F43F10018ED85 /* VisionModel.swift */,
+				B13FE0722D1F44EC0018ED85 /* ScreenshotCapture.swift */,
+				B13FE0762D1F455B0018ED85 /* CursorControl.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -258,6 +270,8 @@
 				B13FE06D2D1B6F2D0018ED85 /* Action.swift in Sources */,
 				B14D76302D16588200D86356 /* MessagesView.swift in Sources */,
 				B11E1E432D12A2A500BBC4D2 /* FileHandler.swift in Sources */,
+				B13FE0752D1F451C0018ED85 /* AIVisionResponse.swift in Sources */,
+				B13FE0732D1F44EC0018ED85 /* ScreenshotCapture.swift in Sources */,
 				B14D76262D16575300D86356 /* Message.swift in Sources */,
 				B14D76292D1657DF00D86356 /* OpenAIService.swift in Sources */,
 				B1DC73212D127A9600A2E746 /* ContentView.swift in Sources */,
@@ -266,6 +280,8 @@
 				B14D76342D1658A900D86356 /* MessageBubble.swift in Sources */,
 				B1DC731F2D127A9600A2E746 /* NothingOSApp.swift in Sources */,
 				B13FE06B2D1B6F210018ED85 /* ActionHandler.swift in Sources */,
+				B13FE0712D1F43F10018ED85 /* VisionModel.swift in Sources */,
+				B13FE0772D1F455B0018ED85 /* CursorControl.swift in Sources */,
 				B14D762E2D16586E00D86356 /* HeaderView.swift in Sources */,
 				B13FE06F2D1F0F3D0018ED85 /* FileContextManager.swift in Sources */,
 			);

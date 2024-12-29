@@ -12,7 +12,7 @@ class ChatViewModel: ObservableObject {
     private let openAIService: OpenAIService
     private let actionHandler: ActionHandler
     private var messageContext: [String]
-
+    private let visionModelHandler: VisionModelHandler
     // Store file context (names and contents)
     private var fileContext: [String: String] = [:]
     private var filesLoaded = false // Flag to track if files have been loaded
@@ -21,9 +21,10 @@ class ChatViewModel: ObservableObject {
     init() {
         let apiKey =  "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"
         self.fileHandler = FileHandler(apiKey: apiKey)
+        self.visionModelHandler = VisionModelHandler()
         self.openAIService = OpenAIService(apiKey: apiKey)
         self.messageContext = []
-        self.actionHandler = ActionHandler(fileHandler: fileHandler)
+        self.actionHandler = ActionHandler(fileHandler: fileHandler, visionModelHandler:visionModelHandler)
 
     }
     
@@ -105,10 +106,11 @@ class ChatViewModel: ObservableObject {
             }
         } else {
             // If files are already loaded, skip the file search
+
             prompt = """
             "\(searchQuery)"
             File contents (if relevant to query):
-            \(fileContext.map { "\($0.key): \($0.value.prefix(20))..." }.joined(separator: "\n"))
+            \(fileContext.map { "\($0.key): \($0.value.prefix(50))..." }.joined(separator: "\n"))
             """
             try? await processAIResponse(prompt: prompt)
         }

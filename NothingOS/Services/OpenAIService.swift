@@ -7,6 +7,16 @@ enum OpenAIError: Error {
     case decodingError(Error)
 }
 
+private struct OpenAIResponse: Codable {
+    struct Choice: Codable {
+        struct Message: Codable {
+            let content: String
+        }
+        let message: Message
+    }
+    let choices: [Choice]
+}
+
 
 class OpenAIService {
     private let apiKey: String
@@ -24,7 +34,7 @@ class OpenAIService {
         
         let systemPrompt = """
         
-        You are an AI assistant that helps users interact with their files, providing summaries, performing actions, and answering questions.
+        You are an AI assistant that helps users interact with their files, providing summaries, performing actions, running applications, and answering questions on macos.
          When asked to create a file, please ensure it is at least one page long, you should make LARGE files when needed.
             If a user requests a file with specific content or length, ensure the content is both relevant and comprehensive, covering the topic in detail.
             If the content is too short, expand on it until it reaches the requested length.
@@ -36,7 +46,7 @@ class OpenAIService {
                 {
                     "type": "<action_type>",  // e.g., openFile, createFile, deleteFile, etc.
                     "parameters": {
-                        "filePath": "/path/to/file",  // Required for file actions, make it in Downloads directory
+                        "filePath": "/Downloads/file",  // Required for file actions, make it in Downloads directory unless its an application
                         "additionalData": data for the file action
                     }
                 }
@@ -49,7 +59,7 @@ class OpenAIService {
         - "deleteFile": To delete a file at the specified path.
         - "renameFile": To rename a file at the specified path.
         - "moveFile": To move a file from one path to another.
-        - "copyFile": To copy a file from one path to another.
+        - "runApplication": Run an application, use applictaions folder
         - "updateFile": To update the content of an existing file.
         Make sure all file paths are in the downloads directory and that subdirectories are capatilized
         If a user asks for a file summary or something that doesn't require an action, simply return the answer in the "message" field, and do not include an "actions" field.
@@ -57,7 +67,7 @@ class OpenAIService {
         You are a generalist and should assist users in a variety of ways. If the user asks to open any random file or to open a relevant file, select one from the list of files you have access to. If there are multiple relevant files, feel free to pick the most appropriate one.
         
         Remember the context of the conversation and track what the user has asked, as it may affect future interactions.
-        
+        When running applictaions or otherwise consider that this is a macbook air and use names accoridngly.
         IMPORTANT: if a user asks for a specific length make it that specific length.
         """
         
@@ -66,7 +76,7 @@ class OpenAIService {
             "model": "gpt-3.5-turbo-16k",
             "messages": [
                 ["role": "system", "content": systemPrompt],
-                ["role": "user", "content": prompt]
+                ["role": "user", "content": prompt],
             ],
             "max_tokens": 5000,  // Increase token limit for longer responses
             
@@ -84,34 +94,29 @@ class OpenAIService {
             throw OpenAIError.invalidResponse
         }
         
-        switch httpResponse.statusCode {
-        case 200:
-            let openAIResponse = try JSONDecoder().decode(OpenAIResponse.self, from: data)
-            guard let contentString = openAIResponse.choices.first?.message.content,
-                  let contentData = contentString.data(using: .utf8) else {
+        return try handleResponse(httpResponse, data: data)
+
+    }
+    
+    func handleResponse(_ response: HTTPURLResponse, data: Data) throws -> AIResponse {
+            switch response.statusCode {
+            case 200:
+                let openAIResponse = try JSONDecoder().decode(OpenAIResponse.self, from: data)
+                guard let content = openAIResponse.choices.first?.message.content,
+                      let contentData = content.data(using: .utf8) else {
+                    throw OpenAIError.invalidResponse
+                }
+                return try JSONDecoder().decode(AIResponse.self, from: contentData)
+                
+            case 429:
+                throw OpenAIError.rateLimitExceeded(
+                    resetTime: response.value(forHTTPHeaderField: "X-RateLimit-Reset") ?? "unknown"
+                )
+                
+            default:
                 throw OpenAIError.invalidResponse
             }
-            
-            return try JSONDecoder().decode(AIResponse.self, from: contentData)
-            
-        case 429:
-            if let resetTime = httpResponse.value(forHTTPHeaderField: "X-RateLimit-Reset") {
-                throw OpenAIError.rateLimitExceeded(resetTime: resetTime)
-            }
-            throw OpenAIError.invalidResponse
-            
-        default:
-            throw OpenAIError.invalidResponse
         }
-    }
+        
      
-    private struct OpenAIResponse: Codable {
-        struct Choice: Codable {
-            struct Message: Codable {
-                let content: String
-            }
-            let message: Message
-        }
-        let choices: [Choice]
-    }
 }
