@@ -17,6 +17,7 @@ struct InputView: View {
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
                     .background(Color.white)
+                    .foregroundColor(.black) // Ensures the text is always black
                     .cornerRadius(8)
                     .onSubmit(onSend)
                 

@@ -8,7 +8,7 @@ class ActionHandler {
           self.fileHandler = fileHandler
           self.visionHandler = visionModelHandler
       }
-    func executeAction(_ action: AIResponse.Action) async throws {
+    func executeAction(_ action: AIResponse.Action, userPrompt:String) async throws {
         switch action.type {
         case "openFile":
             guard var filePath = action.parameters["filePath"] else {
@@ -34,7 +34,7 @@ class ActionHandler {
             
         case "runApplication":
           
-            try await runApplication()
+            try await runApplication(userPrompt:userPrompt )
         case "deleteFile":
             guard var filePath = action.parameters["filePath"] else {
                 throw ActionError.missingParameter("filePath for openFile action")
@@ -66,15 +66,14 @@ class ActionHandler {
         try content.write(to: URL(fileURLWithPath: path), atomically: true, encoding: .utf8)
     }
     
-    private func runApplication() async throws {
+    private func runApplication(userPrompt: String) async throws {
        
-        print("IN")
         guard let screenshot = ScreenshotCapture.captureScreenshot() else {
                    throw ActionError.systemError("Failed to capture screenshot")
                }
      
        // Process the screenshot with Vision model
-       try await visionHandler.processVisionResponse(for: screenshot)
+       try await visionHandler.processVisionResponse(for: screenshot, userPrompt: userPrompt)
    
         
         }

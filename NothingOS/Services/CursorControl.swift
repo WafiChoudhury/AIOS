@@ -18,8 +18,8 @@ class CursorControl {
             
             let screenFrame = screen.frame
             let screenHeight = screenFrame.height
-        let position = CGPoint(x: CGFloat(x) * screenFrame.width, y: CGFloat(y) * screenHeight ) // Invert Y for macOS screen coordinates
-            
+            let screenWidth = screenFrame.width
+        let position = CGPoint(x: CGFloat(x) * screenWidth, y: screenHeight - CGFloat(y) * screenHeight ) // Invert Y for macOS screen coordinates
             print("Moving cursor to: \(position)")
             
             // Create a Quartz mouse move event

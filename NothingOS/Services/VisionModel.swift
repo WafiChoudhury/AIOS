@@ -28,7 +28,7 @@ class VisionModelHandler {
         return pngData.base64EncodedString()
     }
 
-    func sendImageToOpenAI(screenshot: NSImage) async throws -> AIVisionResponse {
+    func sendImageToOpenAI(screenshot: NSImage, userPrompt:String) async throws -> AIVisionResponse {
         let url = URL(string: "https://api.openai.com/v1/chat/completions")!
 
         guard let base64ImageData = convertImageToBase64(image: screenshot) else {
@@ -36,20 +36,21 @@ class VisionModelHandler {
         }
 
         let promptText = """
-        Analyze this screenshot and find the music-related icon or button. Follow these steps carefully:
+        \(userPrompt)
+        Analyze this screenshot and find the corresponding icon related to the user's prompt. For example the prompt "run the spotify app" or "open spotify" should result in moving to the location of the spotify icon as accurately as possible.
 
-        1. Locate ANY of these elements (in order of priority):
-           - Brandon Vu's sad playlist
-        2. Use the following considerations for a 13-inch MacBook Air display:
-           - The screen resolution is approximately 2560x1600 pixels (retina display, scaled).
+            
+        1. Use the following considerations for a 13-inch MacBook Air display:
+           - The screen resolution is approximately 1440px × 900px pixels (retina display, scaled).
            - The taskbar and application dock are typically at the bottom of the screen, so prioritize scanning the lower middle portion first for icons like Spotify.
            - Normalize coordinates between 0 and 1 relative to the full screen resolution.
-           - Adjust `y` values considering that terminal icons are often positioned closer to the bottom third of the screen, likely between 0.2 and 0.5 in normalized `y` coordinates.
+           - Adjust `y` values considering that dock icons are often positioned closer to the bottom third of the screen. If you are running an application ALWAYS output a y coordinate of 0.05.
+           - The middle of the screen should be 0.5 for the x coordinate, output x coordinates accordingly if they are to the right or left or the middle.
 
-        3. For the best match found, provide:
+        2. For the best match found, provide:
            - Exact normalized coordinates (`x` and `y`) where to click.
            - Confidence score (`confidence`) between 0 and 1.
-           - A brief description (`description`) of what was found.
+           - A brief description (`description`) of what was found and what you think of the user.
 
         Respond ONLY with a JSON object in this exact format:
         {
@@ -118,9 +119,9 @@ class VisionModelHandler {
         }
     }
 
-    func processVisionResponse(for screenshot: CGImage) async throws -> IconLocation {
+    func processVisionResponse(for screenshot: CGImage, userPrompt:String) async throws -> IconLocation {
         let nsImage = NSImage(cgImage: screenshot, size: NSSize(width: screenshot.width, height: screenshot.height))
-        let response = try await sendImageToOpenAI(screenshot: nsImage)
+        let response = try await sendImageToOpenAI(screenshot: nsImage, userPrompt: userPrompt)
         let location = try CursorControl.extractCoordinates(from: response)
         
         // Log the detection for debugging

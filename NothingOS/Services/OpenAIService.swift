@@ -52,7 +52,6 @@ class OpenAIService {
                 }
             ]
         }
-        ABOVE ALL ELSE, respond in that JSON format
         Here are some example action types you can use:
         - "openFile": To open a file specified by the user.
         - "createFile": To create a new file with the given content and file path.
@@ -69,6 +68,8 @@ class OpenAIService {
         Remember the context of the conversation and track what the user has asked, as it may affect future interactions.
         When running applictaions or otherwise consider that this is a macbook air and use names accoridngly.
         IMPORTANT: if a user asks for a specific length make it that specific length.
+        ABOVE ALL ELSE, respond in that JSON format
+
         """
         
         
@@ -80,7 +81,7 @@ class OpenAIService {
             ],
             "max_tokens": 5000,  // Increase token limit for longer responses
             
-            "temperature": 0.7
+            "temperature": 0.4
         ]
         
         request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
@@ -99,24 +100,44 @@ class OpenAIService {
     }
     
     func handleResponse(_ response: HTTPURLResponse, data: Data) throws -> AIResponse {
-            switch response.statusCode {
-            case 200:
+        switch response.statusCode {
+        case 200:
+            // Attempt to decode the response as JSON
+            do {
                 let openAIResponse = try JSONDecoder().decode(OpenAIResponse.self, from: data)
-                guard let content = openAIResponse.choices.first?.message.content,
-                      let contentData = content.data(using: .utf8) else {
+                if let content = openAIResponse.choices.first?.message.content {
+                    // Try to parse content as AIResponse
+                    if let contentData = content.data(using: .utf8) {
+                        do {
+                            return try JSONDecoder().decode(AIResponse.self, from: contentData)
+                        } catch {
+                            // If JSON decoding fails, return plain text content
+                            return AIResponse(message: content, actions: nil)
+                        }
+                    } else {
+                        throw OpenAIError.invalidResponse
+                    }
+                } else {
                     throw OpenAIError.invalidResponse
                 }
-                return try JSONDecoder().decode(AIResponse.self, from: contentData)
-                
-            case 429:
-                throw OpenAIError.rateLimitExceeded(
-                    resetTime: response.value(forHTTPHeaderField: "X-RateLimit-Reset") ?? "unknown"
-                )
-                
-            default:
-                throw OpenAIError.invalidResponse
+            } catch {
+                // If the structure of OpenAIResponse fails, try handling it as a plain message
+                if let rawContent = String(data: data, encoding: .utf8) {
+                    return AIResponse(message: rawContent, actions: nil)
+                } else {
+                    throw OpenAIError.decodingError(error)
+                }
             }
+
+        case 429:
+            throw OpenAIError.rateLimitExceeded(
+                resetTime: response.value(forHTTPHeaderField: "X-RateLimit-Reset") ?? "unknown"
+            )
+
+        default:
+            throw OpenAIError.invalidResponse
         }
-        
+    }
+
      
 }
