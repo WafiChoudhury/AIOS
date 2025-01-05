@@ -99,6 +99,8 @@
 		B14D76232D16573C00D86356 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				B1DC731E2D127A9600A2E746 /* NothingOSApp.swift */,
+				B1DC73202D127A9600A2E746 /* ContentView.swift */,
 				B14D762C2D16585D00D86356 /* Components */,
 			);
 			path = Views;
@@ -170,8 +172,6 @@
 				B14D76232D16573C00D86356 /* Views */,
 				B14D76222D16573800D86356 /* Models */,
 				B1DC732D2D12802600A2E746 /* Info.plist */,
-				B1DC731E2D127A9600A2E746 /* NothingOSApp.swift */,
-				B1DC73202D127A9600A2E746 /* ContentView.swift */,
 				B1DC73222D127A9900A2E746 /* Assets.xcassets */,
 				B1DC73272D127A9900A2E746 /* NothingOS.entitlements */,
 				B1DC73242D127A9900A2E746 /* Preview Content */,

@@ -38,6 +38,10 @@ class OpenAIService {
          When asked to create a file, please ensure it is at least one page long, you should make LARGE files when needed.
             If a user requests a file with specific content or length, ensure the content is both relevant and comprehensive, covering the topic in detail.
             If the content is too short, expand on it until it reaches the requested length.
+          Breaking Down Tasks:
+
+          For complex tasks requiring multiple steps, ALWAYS break them into smaller, logical steps.
+          Each step should correspond to a single action in the actions array. The additionaldata should reflect the corresponding prompt to the vision model at each step.
         You must respond ONLY with valid JSON in this exact format, with no other text or explanation:
 
         {
@@ -52,20 +56,42 @@ class OpenAIService {
                 }
             ]
         }
+        Remember multiple steps mean multiple items in the actions array! A request like "Play the first song in liked songs" would be split up into actions where the additonal data would be "run spotify, open liked songs, click the first liked song". example actions array:
+                    "actions": [
+                        {
+                            "type": "runApplication",
+                            "parameters": {
+                                "filePath": "",  //None required
+                                "additionalData": "Run spotify application"
+                            }
+                        },
+                        {
+                            "type": "runApplication",
+                            "parameters": {
+                                "filePath": "",  //None required
+                                "additionalData": "open liked songs element"
+                            }
+                        },
+                        {
+                            "type": "runApplication",
+                            "parameters": {
+                                "filePath": "",  //None required
+                                "additionalData": "click first liked songs element"
+                            }
+                        },
+                    ]
+        
+        
         Here are some example action types you can use:
         - "openFile": To open a file specified by the user.
         - "createFile": To create a new file with the given content and file path.
         - "deleteFile": To delete a file at the specified path.
-        - "renameFile": To rename a file at the specified path.
-        - "moveFile": To move a file from one path to another.
-        - "runApplication": Run an application, use applictaions folder
+        - "runApplication": Run an application. The specific step to do should be in the aditionalData parameter.
         - "updateFile": To update the content of an existing file.
         Make sure all file paths are in the downloads directory and that subdirectories are capatilized
         If a user asks for a file summary or something that doesn't require an action, simply return the answer in the "message" field, and do not include an "actions" field.
-        
         You are a generalist and should assist users in a variety of ways. If the user asks to open any random file or to open a relevant file, select one from the list of files you have access to. If there are multiple relevant files, feel free to pick the most appropriate one.
         
-        Remember the context of the conversation and track what the user has asked, as it may affect future interactions.
         When running applictaions or otherwise consider that this is a macbook air and use names accoridngly.
         IMPORTANT: if a user asks for a specific length make it that specific length.
         ABOVE ALL ELSE, respond in that JSON format

@@ -148,7 +148,7 @@ class ChatViewModel: ObservableObject {
             if let actions = response.actions {
                 for action in actions {
                     do {
-                        try await actionHandler.executeAction(action, userPrompt: prompt)
+                        try await actionHandler.executeAction(action, userPrompt: action.parameters["additionalData"] ?? prompt)
                     } catch {
                         await MainActor.run {
                             messages.append(Message(content: "Error executing action: \(error.localizedDescription)", isUser: false))
